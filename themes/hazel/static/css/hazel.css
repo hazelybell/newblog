@@ -101,7 +101,10 @@ a {
 
 #menu ul li {
     display: block;
-    padding: 0.5em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 0.5ex;
+    padding-bottom: 0.5ex;
     margin: 0;
 }
 
@@ -163,8 +166,9 @@ body>footer {
 
 #menu ul li#feedlink {
     margin-left: auto;
+    padding-bottom: 0;
 }
 
 #feedlink a img {
-    height: 2ex;
+    height: 2.5ex;
 }
