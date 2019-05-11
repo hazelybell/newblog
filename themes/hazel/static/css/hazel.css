@@ -150,5 +150,6 @@ a {
 
 #about {
     color: var(--lightest);
+    font-size: smaller;
 }
 

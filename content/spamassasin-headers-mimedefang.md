@@ -1,6 +1,15 @@
 Title: Adding Standard SpamAssasin Headers with MIMEDefang
 Date: 2019-05-11
-Category: Ops
+Category: Blog
+
+I decided to try out MIMEDefang with SpamAssasin as a Milter to detect
+incoming spam and reject it on my mailserver. However, I wanted to see
+the regular headers you get from SpamAssasin when you run it directly
+in my mails. The problem is, MIMEDefang doesn't let SpamAssasin modify
+the mail in anyway, you have to tell MIMEDefang what modifications to
+make to headers. So, I came up with the following solution for getting
+MIMEDefang to add headers just like the headers you get when you run
+SpamAssasin directly:
 
     :::perl
     if ($Features{"SpamAssassin"}) {
