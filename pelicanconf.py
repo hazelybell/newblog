@@ -13,11 +13,13 @@ TIMEZONE = 'America/Edmonton'
 DEFAULT_LANG = 'en'
 
 # Feed generation is usually not desired when developing
-FEED_ALL_ATOM = None
+FEED_ATOM = 'feeds/atom.xml'
+FEED_ALL_ATOM = None # This seems redundant
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
+FEED_RSS = 'feeds/rss.xml'
 
 # Blogroll
 LINKS = (('Pelican', 'http://getpelican.com/'),
@@ -29,7 +31,15 @@ LINKS = (('Pelican', 'http://getpelican.com/'),
 SOCIAL = (('You can add links in your config file', '#'),
           ('Another social link', '#'),)
 
+GITHUB_URL = 'https://github.com/hazelybell'
+
 DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
+# I don't see why I wouldn't just use relative URLS anwyway
+RELATIVE_URLS = True
+
+MENUITEMS = (
+    ('Contact', 'mailto:me@hazel.zone'),
+    ('Github', 'https://github.com/hazelybell'),
+    )

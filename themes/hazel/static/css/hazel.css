@@ -96,11 +96,12 @@ a {
     padding: 0;
     overflow: hidden;
     background-color: var(--bluer-darkest);
+    align-items: center;
 }
 
 #menu ul li {
     display: block;
-    padding: 1em;
+    padding: 0.5em;
     margin: 0;
 }
 
@@ -148,8 +149,22 @@ a {
     display: none;
 }
 
-#about {
+body>footer {
     color: var(--lightest);
+}
+
+#about {
     font-size: smaller;
 }
 
+.entry-content {
+    padding-bottom: 1em;
+}
+
+#menu ul li#feedlink {
+    margin-left: auto;
+}
+
+#feedlink a img {
+    height: 2ex;
+}
