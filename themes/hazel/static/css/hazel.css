@@ -125,7 +125,7 @@ a {
 
 #post-list {
     list-style: none;
-    max-width: 75em;
+    max-width: 40em;
 }
 
 #page {
@@ -135,7 +135,7 @@ a {
 }
 
 #page article {
-    max-width: 75em;
+    max-width: 40em;
     overflow: wrap;
 }
 
