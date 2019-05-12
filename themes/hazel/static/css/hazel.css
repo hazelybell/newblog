@@ -140,7 +140,6 @@ a {
 
 #page article {
     max-width: 40em;
-    overflow: wrap;
 }
 
 
@@ -183,5 +182,14 @@ ul.tags {
 
 ul.tags li {
     display: inline-block;
+}
+
+code {
+    font-size: 125%;
+    background-color: var(--darkest);
+}
+
+pre {
+    font-size: 125%;
 }
 
