@@ -1,12 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
 <section id="content">
-{% block content_title %}
-<h2>Articles</h2>
-{% endblock %}
+<!-- By Stefaan Lippens 2016 https://www.stefaanlippens.net/quick-and-easy-tag-cloud-in-pelican.html -->
+  <ul class="tags">
+    {%- for tag, articles in tags|sort %}
+      <li style="font-size: {{ articles|count|count_to_font_size }};">
+        <a href="{{ SITEURL }}/{{ tag.url }}">{{ tag }}</a>
+      </li>
+    {%- endfor %}
+  </ul>
+  {% block content_title %}
+  <h2>Articles</h2>
+  {% endblock %}
 
-<ol id="post-list">
-{% for article in articles_page.object_list %}
+  <ol id="post-list">
+  {% for article in articles_page.object_list %}
         <li><article class="hentry">
                 <header> <h2 class="entry-title"><a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark" title="Permalink to {{ article.title|striptags }}">{{ article.title }}</a></h2> </header>
                 <footer class="post-info">
@@ -21,10 +29,10 @@
                 <a href="{{ SITEURL }}/{{ article.url }}">(continue reading)</a>
                 </div><!-- /.entry-content -->
         </article></li>
-{% endfor %}
-</ol><!-- /#posts-list -->
-{% if articles_page.has_other_pages() %}
+  {% endfor %}
+  </ol><!-- /#posts-list -->
+  {% if articles_page.has_other_pages() %}
     {% include 'pagination.html' %}
-{% endif %}
+  {% endif %}
 </section><!-- /#content -->
 {% endblock content %}

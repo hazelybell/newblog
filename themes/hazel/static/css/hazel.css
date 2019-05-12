@@ -123,6 +123,10 @@ a {
     flex-direction: column;
 }
 
+.entry-content {
+    max-width: 40em;
+}
+
 #post-list {
     list-style: none;
     max-width: 40em;
@@ -172,3 +176,12 @@ body>footer {
 #feedlink a img {
     height: 2.5ex;
 }
+
+ul.tags {
+    list-style-type: none;
+}
+
+ul.tags li {
+    display: inline-block;
+}
+

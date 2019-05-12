@@ -43,3 +43,10 @@ MENUITEMS = (
     ('Contact', 'mailto:me@hazel.zone'),
     ('Github', 'https://github.com/hazelybell'),
     )
+
+# By Stefaan Lippens 2016 https://www.stefaanlippens.net/quick-and-easy-tag-cloud-in-pelican.html
+import math
+JINJA_FILTERS = {
+    'count_to_font_size': lambda c: '{p:.1f}%'.format(p=100 + 25 * math.log(c, 2)),
+}
+

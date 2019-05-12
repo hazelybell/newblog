@@ -1,6 +1,7 @@
 Title: Adding Standard SpamAssasin Headers with MIMEDefang
 Date: 2019-05-11
 Category: Blog
+Tags: ops, mail, spam
 
 I decided to try out MIMEDefang with SpamAssasin as a Milter to detect
 incoming spam and reject it on my mailserver. However, I wanted to see
