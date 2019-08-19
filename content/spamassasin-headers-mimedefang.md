@@ -20,7 +20,6 @@ SpamAssasin directly:
             # are extremely unlikely to be spam, and SpamAssassin is
             # dreadfully slow on very large messages.
             my $status = spam_assassin_status();
-            $status->learn();
             my $hits = $status->get_hits;
             my $req = $status->get_required_hits();
             my $tests = $status->get_names_of_tests_hit();
@@ -32,7 +31,6 @@ SpamAssasin directly:
             my $toksummary = $status->get_tag('TOKENSUMMARY');
             my $hammy = $status->get_tag('HAMMYTOKENS');
             my $spammy = $status->get_tag('SPAMMYTOKENS');
-            $status->finish();
             my($score);
             if ($hits < 40) {
                 $score = "*" x int($hits);
@@ -72,6 +70,8 @@ SpamAssasin directly:
                 . " " . $hits
                 . " " . $RelayAddr
             );
+            $status->learn();
+            $status->finish();
         }
     }
 
