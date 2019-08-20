@@ -4,14 +4,15 @@ status: hidden
 ~~~~ {.bibtex }
 
 @INPROCEEDINGS{santos2018syntax,
-author={E. A. {Santos} and J. C. {Campbell} and D. {Patel} and A. {Hindle} and J. N. {Amaral}},
-booktitle={2018 IEEE 25th International Conference on Software Analysis, Evolution and Reengineering (SANER)},
-title={Syntax and sensibility: Using language models to detect and correct syntax errors},
-year={2018},
-pages={311-322},
-keywords={Java;program diagnostics;recurrent neural nets;language models;estimated error location;incomprehensible syntax errors;n-gram models;LSTM model;Java code;long short-term memory;GitHub;Syntactics;Java;Machine learning;Tools;Recurrent neural networks;Semantics},
-doi={10.1109/SANER.2018.8330219},
-month={March},}
+  author={E. A. {Santos} and J. C. {Campbell} and D. {Patel} and A. {Hindle} and J. N. {Amaral}},
+  booktitle={2018 IEEE 25th International Conference on Software Analysis, Evolution and Reengineering (SANER)},
+  title={Syntax and sensibility: Using language models to detect and correct syntax errors},
+  year={2018},
+  pages={311-322},
+  keywords={Java;program diagnostics;recurrent neural nets;language models;estimated error location;incomprehensible syntax errors;n-gram models;LSTM model;Java code;long short-term memory;GitHub;Syntactics;Java;Machine learning;Tools;Recurrent neural networks;Semantics},
+  doi={10.1109/SANER.2018.8330219},
+  month={March},
+}
 
 @incollection{CampbellASD2015,
   author = {Campbell, Joshua Charles and Hindle, Abram and Stroulia, Eleni},
