@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
 
+# Don't bother with caching, site is too small
+LOAD_CONTENT_CACHE = False
+
 AUTHOR = 'Hazel Victoria Campbell'
 SITENAME = "Hazel's Zone"
 SITEURL = ''
@@ -50,3 +53,51 @@ JINJA_FILTERS = {
     'count_to_font_size': lambda c: '{p:.1f}%'.format(p=100 + 25 * math.log(c, 2)),
 }
 
+import pygments.lexers
+import sys
+import os
+
+CUSTOM_HILITERS = os.path.abspath('custom_hiliters.py')
+sys.path.insert(0, os.path.dirname(CUSTOM_HILITERS))
+import custom_hiliters
+for lexer_name in custom_hiliters.__all__:
+    lexer = getattr(custom_hiliters, lexer_name)
+    module_name = 'custom_hiliters'
+    pygments.lexers.LEXERS[lexer_name] = (
+        (
+            module_name,
+            lexer.name,
+            tuple(lexer.aliases),
+            tuple(lexer.filenames),
+            tuple(lexer.mimetypes)
+            )
+        )
+
+#pygments.lexers.load_lexer_from_file(CUSTOM_HILITERS, lexername='NFTablesLexer')
+#pygments.lexers.LEXERS.append()
+#pygments.lexers.get_lexer_by_name('nftables')
+
+from pelican.settings import DEFAULT_CONFIG
+from copy import deepcopy
+
+MARKDOWN = deepcopy(DEFAULT_CONFIG['MARKDOWN'])
+
+CODEHILITE = MARKDOWN.get('extension_configs', dict()).get('markdown.extensions.codehilite', dict())
+CODEHILITE['css_class'] = 'highlight'
+CODEHILITE['linenos'] = False
+CODEHILITE['lineanchors'] = 'codeline'
+CODEHILITE['linespans'] = 'codelinespan'
+
+#try:
+    #MARKDOWN
+#except NameError:
+    #import sys
+    #sys.exit(100)
+    #MARKDOWN = {
+        #'extension_configs': {
+            #'markdown.extensions.codehilite': {'css_class': 'highlight'},
+            #'markdown.extensions.extra': {},
+            #'markdown.extensions.meta': {},
+        #},
+        #'output_format': 'html5',
+    #}

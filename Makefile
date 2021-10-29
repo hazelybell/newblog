@@ -8,7 +8,7 @@ OUTPUTDIR=$(BASEDIR)/output
 CONFFILE=$(BASEDIR)/pelicanconf.py
 PUBLISHCONF=$(BASEDIR)/publishconf.py
 
-SSH_HOST=chou
+SSH_HOST=chou.exists.ws
 SSH_PORT=22
 SSH_USER=wz
 SSH_TARGET_DIR=/var/www/hazel.zone

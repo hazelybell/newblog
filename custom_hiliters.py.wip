@@ -1,0 +1,242 @@
+from pygments.lexers.templates import DjangoLexer
+from pygments.lexers.configs import TOMLLexer
+from pygments.lexer import RegexLexer, inherit
+from pygments.lexer import DelegatingLexer
+from pygments.lexer import bygroups, using, default
+from pygments.token import *
+
+nft_declarators = r'\b(' + '|'.join("""
+    
+    """.split()) + r'|ct\s+helper|ct\s+timeout|ct\s+expectation)\b'
+
+nft_exprstarts = r'\b(' + '|'.join("""
+    meta socket osf fib rt ipsec numgen jhash symhash payload vlan
+    arp ip ip6 icmp igmp icmpv6 tcp udp udplite sctp dccp ah esp comp
+    hbh frag rt dst mh srh tcp\\s+option ip\\s+option exthdr ct
+    ip ip6 inet arp bridge netdev
+    """.split()) + r')\b'
+
+nft_exprwords = r'\b(' + '|'.join("""
+    length nfproto l4proto protocol priority
+    mark iif iifname iiftype oif oifname oiftype
+    skuid skgid nftrace rtclassid ibrname obrname pkttype cpu
+    iifgroup oifgroup cgroup random
+    ipsec iifkind oifkind time hour day
+    transparent mark wildcard
+    ttl version name
+    oif oifname type
+    classid nexthop mtu ipsec realm
+    reqid spi saddr daddr
+    mod
+    daddr saddr type
+    id cfi pcp type
+    htype ptype hlen plen operation
+    saddr\\s+ether
+    saddr\\s+ip
+    daddr\\s+ether
+    daddr\\s+ip
+    version hdrlength dscp ecn length id frag-off ttl protocol checksum
+    flowlabel nexthdr hoplimit
+    type code checksum id sequence gateway mtu
+    type mrt checksum group
+    parameter-problem packet-too-big max-delay
+    sport dport sequence ackseq doff reserved flags window checksum urgptr
+    vtag
+    spi
+    cpi
+    frag-off more-fragments seg-left tag sid eol nop maxseg window sack-perm
+    sack sack0 sack1 sack2 sack3 timestamp lsrr ra rr ssrr
+    state direction status mark expiration helper label
+    original reply l3proto protocol bytes packets avgpkt zone id
+    proto-src proto-dst
+    ruleset
+    """.split()) + r')\b'
+
+nft_commands = r'\b(' + '|'.join("""
+    add create delete list flush rename reset describe
+    """.split()) + r')\b'
+
+nft_types = r'\b(' + '|'.join("""
+    integer bitmask string lladdr ipv4_addr ipv6_addr boolean icmp_type
+    icmp_code icmpx_code icmpv6_code icmpv6_type ct_state ct_dir ct_status
+    ct_event ct_label dccp_pkttype
+    filter nat route
+    """.split()) + r')\b'
+
+nft_statements = r'\b(' + '|'.join("""
+    accept drop queue continue return jump goto
+    log reject counter
+    ct\\s+(mark|event|label|zone)\\s+set
+    notrack
+    meta\\s+(mark|priority|pkttype|nftrace)\\s+set
+    limit\\s+rate
+    synproxy
+    flow
+    dup
+    fwd
+    add update
+    map vmap
+    monitor
+    """.split()) + r')\b'
+
+nft_hooks = r'\b(' + '|'.join("""
+    prerouting input forward output postrouting ingress
+    """.split()) + r')\b'
+
+nft_prios = r'\b(' + '|'.join("""
+    raw mangle dstnat filter security srcnat out
+    """.split()) + r')\b'
+
+nft_comment = (r'#.*?$', Comment.SingleLine)
+
+_nft_tokens = {
+    'root': [],
+    'expr': []
+    }
+
+_nft_variable = (r'\b\$\w+', Name.Variable)
+
+
+def _id(name, cls, extras=r''):
+    id_name = 'id_'+name
+    string_name = 'string_'+name
+    assert id_name not in _nft_tokens
+    assert string_name not in _nft_tokens
+    _nft_tokens[id_name] = [
+        (r'\b[a-zA-Z'+extras+r'][a-zA-Z/\\_.'+extras+r']', cls),
+        (r'\b"', String, string_name),
+        _nft_variable,
+        (r'\s+', Punctuation, '#pop'),
+        (r'\S+', Error, '#pop'),
+        ]
+    _nft_tokens[string_name] = [
+        #(r'[^"\\]+', String),
+        #(r'\\.', String.Escape),
+        #(r'"', String, '#pop'),
+        ('[^"]+', cls),
+        ('"', String, '#pop'),
+        ]
+    return id_name
+
+def _ki(ctx, key, key_cls, id_cls, next_state=None, extras=r''):
+    states = _id(ctx+'_'+key, id_cls, extras)
+    if next_state is None:
+        pass
+    elif isinstance(next_state, tuple):
+        states = (states, *next_state)
+    elif isinstance(next_state, str):
+        states = (states, next_state)
+    else:
+        raise TypeError()
+    return [
+        (r'\b('+key+r')(\s+)',
+            bygroups(key_cls, Punctuation),
+            states)
+        ]
+
+def _root(tup):
+    _nft_tokens['root'].append(tup)
+
+def _root_ki(*args, **kwargs):
+    _root(_ki('', *args, **kwargs))
+
+def _options(name, opts, cls):
+    _nft_tokens[name] = [
+        (r'\b('+'|'.join(opts.split())+r')\b', cls
+        (r'\s+', Punctuation, '#pop'),
+        (r'\S+', Error, '#pop'),
+        ]
+
+_root_ki('include', Keyword.Namespace, Name.Namespace, extras=r'*\[\]?')
+_nft_tokens['equals'] = [
+        (r'\s*=\s*', Operator, '#pop'),
+        default('#pop')
+    ]
+_root_ki('define', Keyword.Namespace, Name.Namespace, ('equals', 'expr'))
+
+_options('af', "ip ip6 inet arp bridge netdev", Keyword.Type)
+_options('hook', "prerouting input forward output postrouting ingress ", Keyword.Type)
+_nft_tokens['root'].append(
+    (r'\b(list|flush)(\s+)(ruleset)(\s+)',
+        bygroups(Name.Function, Punctuation, Name.Function, PUnctuation),
+        'af'
+        ))
+_nft_tokens['root'].append(
+    (r'\b(add|create)(\s+)(ruleset)(\s+)',
+        bygroups(Name.Function, Punctuation, Name.Function, Punctuation),
+        'af'
+        ))
+
+
+
+class NFTablesBaseLexerX(RegexLexer):
+    tokens = {
+        'id': [
+            
+            ]
+        'root': [
+            nft_comment,
+            (nft_statements, Name.Function),
+            (r'\b(snat|dnat|masquerade|redirect|tproxy)\s+((ip|ip6)\s+)?(to)?\b', Name.Function),
+            (r'\b(include)(\s+)(\S+)')
+            (r'\b(table)(\s+)('+nft_id+r')(\s+)('+nft_id+r')\b',
+                bygroups(Keyword.Declaration, Punctuation, Keyword.Type, Punctuation, Name.Class)),
+            (r'\b(chain)(\s+)('+nft_id+r')(\s*{\s*)',
+                bygroups(
+                    Keyword.Declaration, Punctuation, Name.Class, Punctuation),
+                ('chain', 'chainstart')),
+            (nft_hooks, Name.Label),
+            (nft_exprstarts, Name.Builtin),
+            (nft_exprwords, Name.Constant),
+            (nft_commands, Keyword.Namespace),
+            (nft_types, Keyword.Type),
+            (r'[a-zA-Z]+,[0-9a-fA-FxX]+,[0-9a-fA-FxX]+', Number.Hex),
+            (r'[$@][a-zA-Z_0-9]+\b', Name.Variable),
+            (r'#.*?$', Comment.SingleLine),
+            (r'"', String, 'string'),
+            (r'\s+', Text),
+            # Operators
+            (r'(=|!=)', Operator),
+            (r'\bover\b', Operator),
+            (r'-', Operator),
+            (r'[\]{}:(),;\[.]', Punctuation),
+            (r'\b[0-9a-fA-F]+\b', Number),
+            #(r'\b[a-zA-Z_0-9]+\b', Name.Class),
+        ],
+        'string': [
+            ('[^"]+', String),
+            ('"', String, '#pop'),
+        ],
+        'chain': [
+            nft_comment,
+            (r'}', Punctuation, '#pop'),
+            (r'\s+', Punctuation),
+            ],
+        'chainstart': [
+            nft_comment,
+            (r'\b(type)(\s+)('+nft_id+r')',
+                bygroups(Keyword.Reserved, Punctuation, Keyword.Type)),
+            (r'\b(hook)(\s+)('+nft_id+r')',
+                bygroups(Keyword.Reserved, Punctuation, Name.Constant)),
+            (r'\b(device)(\s+)('+nft_id+r')',
+                bygroups(Keyword.Reserved, Punctuation, String.Symbol)),
+            (r'\b(priority)(\s+)('+nft_id+r')',
+                bygroups(Keyword.Reserved, Punctuation, Name.Constant)),
+            (r'(;\s*)(policy)(\s+)('+nft_id+r')',
+                bygroups(Punctuation, Keyword.Reserved, Punctuation, Name.Function)),
+            (r';', Punctuation, '#pop'),
+            (r'\s+', Punctuation),
+            ],
+    }
+class NFTablesLexer(DelegatingLexer):
+    name = 'NFTables'
+    aliases = ['nftables']
+    filenames = ['nftables.conf']
+
+    def __init__(self, **options):
+        super().__init__(NFTablesBaseLexer, DjangoLexer, **options)
+
+    #def analyse_text(text):
+        #return DjangoLexer.analyse_text(text) - 0.05
+
+__all__ = ['NFTablesLexer']
