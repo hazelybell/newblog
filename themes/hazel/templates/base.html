@@ -30,14 +30,14 @@
   {% endif %}
   <link rel="stylesheet" href="/theme/css/hazel.css">
   <link rel="stylesheet" href="/theme/css/syntax.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
   {% endblock head %}
 </head>
 
 <body id="index" class="home">
   <header id="banner" class="body">
-    <a href="{{ SITEURL }}/"><img src="/theme/images/logo.svg" alt="logo"></a>
-    <h1><a href="{{ SITEURL }}/">{{ SITENAME }} <strong>{{ SITESUBTITLE }}</strong></a></h1>
-    <div></div>
+        <a href="{{ SITEURL }}/"><img src="/theme/images/logo.svg" alt="logo"></a>
+        <h1><a href="{{ SITEURL }}/">{{ SITENAME }} <strong>{{ SITESUBTITLE }}</strong></a></h1>
   </header><!-- /#banner -->
   <nav id="menu"><ul>
   {% if DISPLAY_PAGES_ON_MENU %}
